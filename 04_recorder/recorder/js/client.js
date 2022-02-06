@@ -12,7 +12,7 @@ var btnDownload = document.querySelector('button#download');
 var buffer;
 var mediaRecorder;
 
-
+// 03 gotMediaStream
 function gotMediaStream(stream){
 
 	window.stream = stream;
@@ -42,15 +42,16 @@ function start() {
 			}, 
 			audio : false 
 		}
-
+		// 02 navigator.mediaDevices.getUserMedia
 		navigator.mediaDevices.getUserMedia(constraints)
 			.then(gotMediaStream)
 			.catch(handleError);
 	}
 }
-
+// 01 start
 start();
 
+// 06 new MediaRecorder handleDataAvailable buffer.push
 function handleDataAvailable(e){
 	if(e && e.data && e.data.size > 0){
 	 	buffer.push(e.data);			
@@ -59,7 +60,7 @@ function handleDataAvailable(e){
 
 function startRecord(){
 	
-	buffer = [];
+	buffer = []; // 每次点击 start 时，重置 buffer
 
 	var options = {
 		mimeType: 'video/webm;codecs=vp8'
@@ -69,7 +70,7 @@ function startRecord(){
 		console.error(`${options.mimeType} is not supported!`);
 		return;	
 	}
-
+	// 05 new MediaRecorder
 	try{
 		mediaRecorder = new MediaRecorder(window.stream, options);
 	}catch(e){
@@ -78,7 +79,7 @@ function startRecord(){
 	}
 
 	mediaRecorder.ondataavailable = handleDataAvailable;
-	mediaRecorder.start(10);
+	mediaRecorder.start(10);	// timeslice，时间切片，方便读写
 
 }
 
@@ -87,7 +88,7 @@ function stopRecord(){
 }
 
 btnRecord.onclick = ()=>{
-
+	// 04 btnRecord.onclick startRecord
 	if(btnRecord.textContent === 'Start Record'){
 		startRecord();	
 		btnRecord.textContent = 'Stop Record';
@@ -104,6 +105,7 @@ btnRecord.onclick = ()=>{
 }
 
 btnPlay.onclick = ()=> {
+	// 07 new Blob(buffer)
 	var blob = new Blob(buffer, {type: 'video/webm'});
 	recvideo.src = window.URL.createObjectURL(blob);
 	recvideo.srcObject = null;
@@ -112,6 +114,7 @@ btnPlay.onclick = ()=> {
 }
 
 btnDownload.onclick = ()=> {
+	// 08 new Blob(buffer)
 	var blob = new Blob(buffer, {type: 'video/webm'});
 	var url = window.URL.createObjectURL(blob);
 	var a = document.createElement('a');
