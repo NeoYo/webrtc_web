@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to WebRTC!</title>
+    <style lang="css">
+      video {
+        width: 100vw;
+      }
+    </style>
+    <script>
+      /**
+       *  MARK: navigator.mediaDevices 不为空的情形如下
+       *  1. localhost
+       *  2. 认证过的 HTTPS 域名
+       *  注意局域网 ip 无法使用
+       */
+      const mediaStreamContrains = {
+          video: {    // 也可以直接设置 true
+              frameRate: {min: 20},           // 最小视频帧率
+              width: {min: 640, ideal: 1280}, // ideal：理想宽度
+              height: {min: 360, ideal: 720},
+              aspectRatio: 16/9
+          },
+          audio: {    // true
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true
+          }
+      };
+
+      function gotLocalMediaStream(mediaStream){
+          const localVideo = document.querySelector('video');
+          localVideo.srcObject = mediaStream;
+      }
+
+      navigator.mediaDevices.getUserMedia(mediaStreamContrains).then(gotLocalMediaStream);
+    </script>
+  </head>
+  <body>
+    <h1>
+      <h1>Welcome to We Meet! </h1>
+      <!--
+          autoplay: 自动加载
+          playsinline: 在浏览器内播放视频，不用系统播放器
+      -->
+      <video autoplay playsinline></video>
+    </h1>
+  </body>
+</html>

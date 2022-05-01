@@ -18,7 +18,7 @@ function start() {
 
     if(!navigator.mediaDevices ||
        !navigator.mediaDevices.getUserMedia){
-
+        // 注意：只有 localhost 和 https 才不为空
         console.log('getUserMedia is not supported!');
         return;
 

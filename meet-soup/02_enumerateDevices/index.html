@@ -1,0 +1,108 @@
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title> WebRTC get audio and video devices</title>
+	</head>
+	<body>
+		<div>
+			<label>audio input device:</label>
+			<select id="audioSource"></select>
+			<ul id="audioSourceList"></ul>
+		</div>
+		<div>
+			<label>audio output device:</label>
+			<select id="audioOutput"></select>
+			<ul id="audioOutputList"></ul>
+		</div>
+		<div>
+			<label>video input device:</label>
+			<select id="videoSource"></select>
+			<ul id="videoSourceList"></ul>
+		</div>
+		<h1>Welcome to We Meet! </h1>
+		<!--
+			autoplay: 自动加载
+			playsinline: 在浏览器内播放视频，不用系统播放器
+		-->
+		<video autoplay playsinline></video>
+	</body>
+	<script>
+		// MARK：需要先调用 getUserMedia, 才能 enumerateDevices
+		const mediaStreamContrains = {
+			video: {    // 也可以直接设置 true
+				frameRate: {min: 20},           // 最小视频帧率
+				width: {min: 640, ideal: 1280}, // ideal：理想宽度
+				height: {min: 360, ideal: 720},
+				aspectRatio: 16/9
+			},
+			audio: true,
+		};
+
+		function gotLocalMediaStream(mediaStream){
+			const localVideo = document.querySelector('video');
+			localVideo.srcObject = mediaStream;
+
+			setTimeout(() => {
+				/**
+					*  MARK: navigator.mediaDevices 不为空的情形如下
+					*  1. localhost
+					*  2. 认证过的 HTTPS 域名
+					*  注意使用局域网 ip 是为空的
+					*
+					*  navigator.mediaDevices.enumerateDevices 的 label
+					*  需要调用下 getUserMedia, 但 label 仍然可能为空
+					*  实测如下：
+					*  1. 荣耀 50 pro. UI 浏览器，摄像头有 label，音频没有 label （可能要用 Chrome 浏览器）
+					*  2. iPhone 8. Safari. label 都有
+					* 
+				*/
+				if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices){
+					console.log('enumerateDevices is not supported!');
+				} else {
+					navigator.mediaDevices.enumerateDevices()
+						.then(gotDevices)
+						.catch(handleError);
+				}
+			}, 2000);
+
+		}
+
+		navigator.mediaDevices.getUserMedia(mediaStreamContrains).then(gotLocalMediaStream);
+		
+		var audioSource  = document.querySelector("select#audioSource");
+		var audioOutput  = document.querySelector("select#audioOutput");
+		var videoSource  = document.querySelector("select#videoSource");
+
+
+		function gotDevices(deviceInfos){
+			console.log('deviceInfos: ', deviceInfos);
+			deviceInfos.forEach( function(deviceInfo){
+				const curDeviceInfo = deviceInfo.kind + ": label = " 
+						+ deviceInfo.label + ": id = "
+						+ deviceInfo.deviceId + ": groupId = "
+						+ deviceInfo.groupId;
+				var option = document.createElement('option');
+				option.text = deviceInfo.label;
+				option.value = deviceInfo.deviceId;
+				
+				var child = document.createElement('li');
+				child.innerText = curDeviceInfo;
+				if(deviceInfo.kind === 'audioinput'){
+					audioSource.appendChild(option);
+					document.querySelector('ul#audioSourceList').appendChild(child);
+				}else if(deviceInfo.kind === 'audiooutput'){
+					audioOutput.appendChild(option);
+					document.querySelector('ul#audioOutputList').appendChild(child);
+				}else if(deviceInfo.kind === 'videoinput'){
+					videoSource.appendChild(option);
+					document.querySelector('ul#videoSourceList').appendChild(child);
+				}
+			});
+		}
+		function handleError(err){
+			console.log(err.name + " : " + err.message);
+		}
+	</script>
+</html>
+	

@@ -50,7 +50,7 @@ var options = {
 //https server
 var https_server = https.createServer(options, app);
 var io = socketIo.listen(https_server);
-
+console.log('io: ', io);
 io.sockets.on('connection', (socket)=> {
 
 	socket.on('message', (room, data)=>{
