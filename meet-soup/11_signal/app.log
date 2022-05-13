@@ -1,0 +1,18 @@
+21:31:32 DEBUG - the user number of room (岗厦) is: 0
+21:51:30 DEBUG - the user number of room (1) is: 0
+21:51:35 DEBUG - message, room: 1, data, type:undefined
+21:51:39 DEBUG - message, room: 1, data, type:undefined
+21:52:35 DEBUG - the user number of room (2) is: 0
+21:52:54 DEBUG - the user number of room (3) is: 0
+21:52:57 DEBUG - message, room: 3, data, type:undefined
+21:53:07 DEBUG - the user number of room is: 0
+21:53:11 DEBUG - the user number of room (2) is: 0
+21:53:14 DEBUG - message, room: 2, data, type:undefined
+21:53:16 DEBUG - message, room: 2, data, type:undefined
+21:53:20 DEBUG - message, room: 2, data, type:undefined
+21:53:22 DEBUG - message, room: 2, data, type:undefined
+21:53:34 DEBUG - the user number of room (信工楼) is: 0
+21:53:45 DEBUG - message, room: 信工楼, data, type:undefined
+21:53:58 DEBUG - the user number of room (信工楼) is: 0
+21:54:03 DEBUG - message, room: 信工楼, data, type:undefined
+21:54:16 DEBUG - message, room: 信工楼, data, type:undefined

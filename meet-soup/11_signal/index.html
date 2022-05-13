@@ -1,0 +1,263 @@
+<html>
+	<head>
+		<title>Chat Room</title>
+		<!-- <link rel="stylesheet" href="./css/main.css"></link> -->
+		<style>
+			/*
+			*  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+			*
+			*  Use of this source code is governed by a BSD-style license
+			*  that can be found in the LICENSE file in the root of the source
+			*  tree.
+			*/
+			button {
+				margin: 0 20px 25px 0;
+				vertical-align: top;
+				width: 134px;
+			}
+
+			div#getUserMedia {
+				padding: 0 0 8px 0;
+			}
+
+			div.input {
+				display: inline-block;
+				margin: 0 4px 0 0;
+				vertical-align: top;
+				width: 310px;
+			}
+
+			div.input > div {
+				margin: 0 0 20px 0;
+				vertical-align: top;
+			}
+
+			div.output {
+				background-color: #eee;
+				display: inline-block;
+				font-family: 'Inconsolata', 'Courier New', monospace;
+				font-size: 0.9em;
+				padding: 10px 10px 10px 25px;
+				position: relative;
+				top: 10px;
+				white-space: pre;
+				width: 270px;
+			}
+
+			section#statistics div {
+				display: inline-block;
+				font-family: 'Inconsolata', 'Courier New', monospace;
+				vertical-align: top;
+				width: 308px;
+			}
+
+			section#statistics div#senderStats {
+				margin: 0 20px 0 0;
+			}
+
+			section#constraints > div {
+				margin: 0 0 20px 0;
+			}
+
+			section#video > div {
+				display: inline-block;
+				margin: 0 20px 0 0;
+				vertical-align: top;
+				width: calc(50% - 22px);
+			}
+
+			section#video > div div {
+				font-size: 0.9em;
+				margin: 0 0 0.5em 0;
+				width: 320px;
+			}
+
+			h2 {
+				margin: 0 0 1em 0;
+			}
+
+			section#constraints label {
+				display: inline-block;
+				width: 156px;
+			}
+
+			section {
+				margin: 0 0 20px 0;
+				padding: 0 0 15px 0;
+			}
+
+			section#video {
+				width: calc(100% + 20px);
+			}
+
+			video {
+				--width: 90%;
+				display: inline-block;
+				width: var(--width);
+				height: calc(var(--width) * 0.75);
+				margin: 0 0 10px 0;
+			}
+
+			@media screen and (max-width: 720px) {
+				button {
+						font-weight: 500;
+						height: 56px;
+						line-height: 1.3em;
+						width: 90px;
+				}
+
+				div#getUserMedia {
+						padding: 0 0 40px 0;
+				}
+
+				section#statistics div {
+						width: calc(50% - 14px);
+				}
+
+				video {
+						display: inline-block;
+						width: var(--width);
+						height: 96px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<table align="center">
+			<tr>
+				<td>
+					<label>UserName: </label>
+					<input type=text id="username"></input>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>room: </label>
+					<input type=text id="room"></input>
+					<button id="connect">Conect</button>
+					<button id="leave" disabled>Leave</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>Content: </label><br>
+					<textarea disabled style="line-height: 1.5;" id="output" rows="10" cols="100"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>Input: </label><br>
+					<textarea disabled id="input" rows="3" cols="100"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button id="send">Send</button>
+				</td>
+			</tr>
+		</table>
+
+		<!-- <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script> -->
+		<script>
+			var userName = document.querySelector('input#username');
+			var inputRoom = document.querySelector('input#room');
+			var btnConnect = document.querySelector('button#connect');
+			var btnLeave = document.querySelector('button#leave');
+			var outputArea = document.querySelector('textarea#output');
+			var inputArea = document.querySelector('textarea#input');
+			var btnSend = document.querySelector('button#send');
+
+			function singleInstance() {
+				// 腾讯云 WebSocket 协议支持 https://cloud.tencent.com/document/product/583/63406
+				const socket = new WebSocket('ws://service-h4qurqxw-1253891957.gz.apigw.tencentcs.com/release/');
+
+				// Connection opened
+				socket.addEventListener('open', function (event) {
+							socket.send('Hello Server!');
+							setTimeout(() => {
+								socket.send('Test!');
+							}, 1000);
+				});
+
+				// Listen for messages
+				socket.addEventListener('message', function (event) {
+							console.log('Message from server ', event.data);
+				});
+			}
+
+			singleInstance();
+
+			var socket;
+			var room;
+
+			btnConnect.onclick = ()=>{
+				return;
+				//connect
+				socket = io('ws://service-n16fetfm-1253891957.gz.apigw.tencentcs.com', {
+					path: '/release/socket.io',
+					// transports: ['websocket'],
+					// secure: true,
+				});
+				
+				// socket = io(); 
+				
+				//recieve message
+				socket.on('joined', (room, id) => {
+					btnConnect.disabled = true;
+					btnLeave.disabled = false;
+					inputArea.disabled = false;
+					btnSend.disabled = false;
+				});	
+				
+				socket.on('leaved', (room, id) => {
+					btnConnect.disabled = false;
+					btnLeave.disabled = true;
+					inputArea.disabled = true;
+					btnSend.disabled = true;
+
+					socket.disconnect();
+				});	
+
+				socket.on('message', (room, data) => {
+					outputArea.scrollTop = outputArea.scrollHeight;//窗口总是显示最后的内容
+					outputArea.value = outputArea.value + data + '\r';
+				});	
+
+				socket.on('disconnect', (socket)=>{
+					btnConnect.disabled = false;
+					btnLeave.disabled = true;
+					inputArea.disabled = true;
+					btnSend.disabled = true;
+				});
+
+				//send message
+				room = inputRoom.value;
+				socket.emit('join', room);
+			}
+
+			btnSend.onclick = ()=>{
+				var data = inputArea.value;
+				data = userName.value + ':' + data;
+				socket.emit('message', room, data);
+				inputArea.value = '';
+			}
+
+			btnLeave.onclick = ()=>{
+				room = inputRoom.value;
+				socket.emit('leave', room);
+			}
+
+			inputArea.onkeypress = (event)=> {
+				//event = event || window.event;
+				if (event.keyCode == 13) { //回车发送消息
+					var data = inputArea.value;
+					data = userName.value + ':' + data;
+					socket.emit('message', room, data);
+					inputArea.value = '';
+					event.preventDefault();//阻止默认行为
+				}
+			}
+		</script>
+	</body>
+
+</html>

@@ -35,12 +35,12 @@ var logger = log4js.getLogger();
 var app = express();
 // app.use(serveIndex('./public'));
 // app.use(express.static('./public'));
-app.use('/js', express.static('js'))
-app.use('/css', express.static('css'))
+app.use('11/js', express.static('js'))
+app.use('11/css', express.static('css'))
 
 
 
-app.get('/', (req, res) => {
+app.get('11/', (req, res) => {
 	res.sendFile(__dirname + '/index.html');
 });
 
@@ -55,7 +55,9 @@ var http_server = http.createServer(app);
 
 //https server
 // var https_server = https.createServer({}, app);
-const io = require('socket.io')(http_server);
+const io = require('socket.io')(http_server, {
+	allowEIO3: true // false by default
+});
 // var io = io.listen(https_server);
 console.log('io: ', io);
 io.on('connection', (socket)=> {

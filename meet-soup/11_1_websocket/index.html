@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function singleInstance() {
+            // 腾讯云 WebSocket 协议支持 https://cloud.tencent.com/document/product/583/63406
+            const socket = new WebSocket('ws://service-h4qurqxw-1253891957.gz.apigw.tencentcs.com/release/');
+            // Connection opened
+            socket.addEventListener('open', function (event) {
+                socket.send('Hello Server!');
+                setTimeout(() => {
+                    socket.send('Test!');
+                }, 1000);
+            });
+            // Listen for messages
+            socket.addEventListener('message', function (event) {
+                console.log('Message from server ', event.data);
+            });
+        }
+        singleInstance();
+    </script>
+</body>
+</html>
