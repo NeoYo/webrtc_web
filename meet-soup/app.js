@@ -105,7 +105,7 @@ app.use(router.allowedMethods()).use(router.routes())
 //   console.log(`Server start on http://localhost:9000`);
 // })
 // User for socket.ioi
-http_server.listen(9000, () => {
-  console.log(`Server start on http://localhost:9000`);
+http_server.listen(80, () => {
+  console.log(`Server start on http://localhost:80`);
 })
 
